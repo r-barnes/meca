@@ -4,6 +4,33 @@ MECA: MaxEnt Climate Aggregator
 Takes gridded climate models and produces from them the data files necessary to
 run the MaxEnt program.
 
+Installation
+------------
+
+You will need the following:
+
+ * Python (https://www.python.org/downloads/)
+ * h5py   (https://pypi.python.org/pypi/h5py)
+ * numpy  (http://www.scipy.org/scipylib/download.html)
+
+On **Linux** these can usually be installed with your package manager using, e.g.,
+
+    sudo apt-get install python-numpy
+
+or
+
+    sudo pip install numpy
+
+And everything will be taken care of.
+
+Binaries for **Windows** and **Mac** should be available through the links
+above. It may take some fiddling to get things to work.
+
+
+
+Usage
+-----
+
 Check [here, at gdo-dcp.ucllnl.org](http://gdo-dcp.ucllnl.org/downscaled_cmip_projections/dcpInterface.html#Projections:%20Complete%20Archives), to get gridded climate files of interest. Also available in [this](ftp://gdo-dcp.ucllnl.org/pub/dcp/archive/cmip5/) FTP repository.
 
 Place the files of interest within a directory. The program will search
