@@ -2,17 +2,17 @@
 
 from scipy.io import netcdf  #For NetCDF file reading
 import h5py                  #For HDF5 file reading
-import sys
+import sys                   #For command line arguments and exiting
 import numpy as np
-import io
-import glob          #Used for listing files in a directory
-import inspect       #For gettting the server root directory
-import os            #For gettting the server root directory
-import bisect        #For finding where lat/lon are in a sorted list
-import itertools     #For mashing years with months
-import datetime
-import time
-import fnmatch
+#import io
+import glob                   #Used for listing files in a directory
+import os                     #For gettting the server root directory
+import bisect                 #For finding where lat/lon are in a sorted list
+import itertools              #For mashing years with months
+import datetime               #For managing time manipulation
+import time                   #For managing time manipulation
+import fnmatch                #For filtering file names
+import argparse               #For handling command line magic
 
 #import code #For debugging with: code.interact(local=locals())
 
@@ -267,7 +267,7 @@ def _indAccum(models, startyear, endyear, indvar, sumvar, maxmin, mean):
   sys.stderr.write("\n")
   return accum
 
-def MeanTempWesttest(models, startyear, endyear):
+def MeanTempWettest(models, startyear, endyear):
   return _indAccum(models,startyear,endyear,'pr','tas','max',mean=True)/len(models)
 
 def MeanTempDriest(models, startyear, endyear):
@@ -303,12 +303,19 @@ def writeArrayToArcGrid(filename,arr,exmodel):
   fout.write(headerstring)
   np.savetxt(fout,arr,'%5.2f')
 
-filename              = inspect.getframeinfo(inspect.currentframe()).filename
-server_root_directory = os.path.dirname(os.path.abspath(filename))
 
+
+
+
+parser = argparse.ArgumentParser(description='Aggregates gridded climate info for use in MaxEnt')
+parser.add_argument('basedir',   type=str, nargs=1, help='Base directory of climate data')
+parser.add_argument('rcp',       type=str, nargs=1, help='historical/rcp26/rcp45/rcp60/rcp85')
+parser.add_argument('startyear', type=int, nargs=1, help='Start year of averaging interval (inclusive)')
+parser.add_argument('endyear',   type=int, nargs=1, help='End year of averaging interval (inclusive)')
+args = parser.parse_args()
 
 files = []
-for root, dirnames, filenames in os.walk('gdo-dcp.ucllnl.org'):
+for root, dirnames, filenames in os.walk(args.basedir):
   for filename in fnmatch.filter(filenames, 'BCSD*.nc'):
     files.append(os.path.join(root, filename))
 
@@ -326,10 +333,10 @@ for fname in files:
   data[rcp][model][variable] = HDFClimateGrid(fname, variable)
   examplemodel               = data[rcp][model][variable]
 
-varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWesttest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
+varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
 #varstocalculate = [AnnualMeanTemperature]
 for v in varstocalculate:
   print("Running %s..." % (v.__name__))
-  res = v(data['historical'],1975,2005)
+  res = v(data[args.rcp],args.startyear,args.endyear)
   writeArrayToArcGrid(v.__name__+'.asc',res,examplemodel)
   np.save(v.__name__,res)
