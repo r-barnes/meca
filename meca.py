@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from scipy.io import netcdf  #For NetCDF file reading
+#from scipy.io import netcdf  #For NetCDF file reading
 import h5py                  #For HDF5 file reading
 import sys                   #For command line arguments and exiting
 import numpy as np
