@@ -308,10 +308,11 @@ def writeArrayToArcGrid(filename,arr,exmodel):
 
 
 parser = argparse.ArgumentParser(description='Aggregates gridded climate info for use in MaxEnt')
-parser.add_argument('basedir',   type=str, nargs=1, help='Base directory of climate data')
-parser.add_argument('rcp',       type=str, nargs=1, help='historical/rcp26/rcp45/rcp60/rcp85')
-parser.add_argument('startyear', type=int, nargs=1, help='Start year of averaging interval (inclusive)')
-parser.add_argument('endyear',   type=int, nargs=1, help='End year of averaging interval (inclusive)')
+parser.add_argument('basedir',       type=str, nargs=1, help='Base directory of climate data')
+parser.add_argument('rcp',           type=str, nargs=1, help='historical/rcp26/rcp45/rcp60/rcp85')
+parser.add_argument('startyear',     type=int, nargs=1, help='Start year of averaging interval (inclusive)')
+parser.add_argument('endyear',       type=int, nargs=1, help='End year of averaging interval (inclusive)')
+parser.add_argument('output_prefix', type=str, nargs=1, help='Prefix to output files')
 args = parser.parse_args()
 
 files = []
@@ -338,5 +339,5 @@ varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,
 for v in varstocalculate:
   print("Running %s..." % (v.__name__))
   res = v(data[args.rcp],args.startyear,args.endyear)
-  writeArrayToArcGrid(v.__name__+'.asc',res,examplemodel)
+  writeArrayToArcGrid(args.output_prefix + v.__name__+'.asc',res,examplemodel)
   np.save(v.__name__,res)
