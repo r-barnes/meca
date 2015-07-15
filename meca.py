@@ -335,7 +335,7 @@ for fname in files:
   print(rcp,model,variable)
   data[rcp][model][variable] = HDFClimateGrid(fname, variable)
   dts_of_model               = list(data[rcp][model][variable].timesToDateTime())
-  print("\tStart: %s, End %s" % (dts_of_model[0 ].strftime("%y-%m-%d"), dts_of_model[-1].strftime("%y-%m-%d")))
+  print("\tStart: %s, End %s" % (dts_of_model[0 ].strftime("%Y-%m-%d"), dts_of_model[-1].strftime("%Y-%m-%d")))
   examplemodel               = data[rcp][model][variable]
 
 varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
