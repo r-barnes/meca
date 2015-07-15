@@ -332,10 +332,9 @@ for fname in files:
     data[rcp] = {}
   if not model in data[rcp]:
     data[rcp][model] = {}
-  print(rcp,model,variable)
   data[rcp][model][variable] = HDFClimateGrid(fname, variable)
   dts_of_model               = list(data[rcp][model][variable].timesToDateTime())
-  print("\tStart: %s, End %s" % (dts_of_model[0 ].strftime("%Y-%m-%d"), dts_of_model[-1].strftime("%Y-%m-%d")))
+  print("%10s %10s %10s %10s %10s" % (rcp,model,variable,dts_of_model[0 ].strftime("%Y-%m-%d"), dts_of_model[-1].strftime("%Y-%m-%d")))
   examplemodel               = data[rcp][model][variable]
 
 varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
