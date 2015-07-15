@@ -308,15 +308,15 @@ def writeArrayToArcGrid(filename,arr,exmodel):
 
 
 parser = argparse.ArgumentParser(description='Aggregates gridded climate info for use in MaxEnt')
-parser.add_argument('basedir',       type=str, nargs=1, help='Base directory of climate data')
-parser.add_argument('rcp',           type=str, nargs=1, help='historical/rcp26/rcp45/rcp60/rcp85')
-parser.add_argument('startyear',     type=int, nargs=1, help='Start year of averaging interval (inclusive)')
-parser.add_argument('endyear',       type=int, nargs=1, help='End year of averaging interval (inclusive)')
-parser.add_argument('output_prefix', type=str, nargs=1, help='Prefix to output files')
+parser.add_argument('basedir',       type=str, help='Base directory of climate data')
+parser.add_argument('rcp',           type=str, help='historical/rcp26/rcp45/rcp60/rcp85')
+parser.add_argument('startyear',     type=int, help='Start year of averaging interval (inclusive)')
+parser.add_argument('endyear',       type=int, help='End year of averaging interval (inclusive)')
+parser.add_argument('output_prefix', type=str, help='Prefix to output files')
 args = parser.parse_args()
 
 files = []
-for root, dirnames, filenames in os.walk(args.basedir[0]):
+for root, dirnames, filenames in os.walk(args.basedir):
   for filename in fnmatch.filter(filenames, 'BCSD*.nc'):
     files.append(os.path.join(root, filename))
 
