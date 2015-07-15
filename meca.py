@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 #from scipy.io import netcdf  #For NetCDF file reading
 import h5py                  #For HDF5 file reading
@@ -230,7 +230,7 @@ def PrecipitationSeasonality(models, startyear, endyear):
 #Mean Diurnal Range (Mean of monthly (max temp - min temp))
 def MeanDiurnalRange(models, startyear, endyear):
   accum                = None
-  firstmodel           = models.values().next()
+  firstmodel           = models.iteritems().next()
   start_time, end_time = firstmodel['tasmax'].yearRangeToTimeRange(startyear,endyear)
   for m in models:
     for t in range(start_time,end_time+1):
@@ -298,8 +298,8 @@ def writeArrayToArcGrid(filename,arr,exmodel):
   arr                = np.copy(arr)
   arr[np.isnan(arr)] = -9999
   arr                = np.flipud(arr)
-  fout               = open(filename,'wb')
-  headerstring       = bytes('NCOLS %d\nNROWS %d\nXLLCENTER %f\nYLLCENTER %f\nCELLSIZE %f\nNODATA_value %f\n' % (arr.shape[1], arr.shape[0], exmodel.lon.min(), exmodel.lat.min(), abs(exmodel.lat[1]-exmodel.lat[0]),-9999), 'UTF-8')
+  fout               = open(filename,'w')
+  headerstring       = 'NCOLS %d\nNROWS %d\nXLLCENTER %f\nYLLCENTER %f\nCELLSIZE %f\nNODATA_value %f\n' % (arr.shape[1], arr.shape[0], exmodel.lon.min(), exmodel.lat.min(), abs(exmodel.lat[1]-exmodel.lat[0]),-9999)
   fout.write(headerstring)
   np.savetxt(fout,arr,'%5.2f')
 
@@ -335,6 +335,7 @@ for fname in files:
   examplemodel               = data[rcp][model][variable]
 
 varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
+varstocalculate = [MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
 #varstocalculate = [AnnualMeanTemperature]
 for v in varstocalculate:
   print("Running %s..." % (v.__name__))
