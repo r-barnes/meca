@@ -64,7 +64,7 @@ class ClimateGrid():
     return self.start_time
 
   def endTime(self):
-    return self.start_time+date.timedelta(days=self.time[-1])
+    return self.start_time+datetime.timedelta(days=self.time[-1])
 
   def yearMonthsToTimes(self, startyear, endyear, months):
     years     = range(int(startyear),int(endyear)+1)
