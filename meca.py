@@ -17,6 +17,14 @@ import code
 
 #import code #For debugging with: code.interact(local=locals())
 
+#Yield all values from a nested dictionary structure
+def NestedDictValues(d):
+  for v in d.values():
+    if isinstance(v, dict):
+      yield from NestedDictValues(v)
+    else:
+      yield v
+
 def binaryfind(arr, val):
   if val<arr[0] or val>arr[-1]:
     raise Exception('Value not in range of array')
@@ -51,6 +59,12 @@ class ClimateGrid():
 
   def timesToDateTime(self):
     return map(lambda x: self.start_time+datetime.timedelta(days=x),self.time)
+
+  def startTime(self):
+    return self.start_time
+
+  def endTime(self):
+    return self.start_time+date.timedelta(days=self.time[-1])
 
   def yearMonthsToTimes(self, startyear, endyear, months):
     years     = range(int(startyear),int(endyear)+1)
@@ -339,6 +353,15 @@ for fname in files:
 
 varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
 #varstocalculate = [AnnualMeanTemperature]
+
+models_to_be_processed = NestedDictValues(data[args.rcp])
+start_times            = [x.startTime() for x in models_to_be_processed]
+end_times              = [x.endTime()   for x in models_to_be_processed]
+start_times            = max(start_times)
+end_times              = min(end_times)
+
+print("Most narrow time window for data is %s to %s" % (start_times.strftime("%Y-%m-%d"), end_times.strftime("%Y-%m-%d")))
+
 for v in varstocalculate:
   print("Running %s..." % (v.__name__))
   res = v(data[args.rcp],args.startyear,args.endyear)
