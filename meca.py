@@ -61,7 +61,7 @@ class ClimateGrid():
     return map(lambda x: self.start_time+datetime.timedelta(days=x),self.time)
 
   def startTime(self):
-    return self.start_time
+    return self.start_time+datetime.timedelta(days=x),self.time[0])
 
   def endTime(self):
     return self.start_time+datetime.timedelta(days=self.time[-1])
@@ -354,6 +354,7 @@ for fname in files:
 varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
 #varstocalculate = [AnnualMeanTemperature]
 
+code.
 start_times            = [x.startTime() for x in NestedDictValues(data[args.rcp])]
 end_times              = [x.endTime()   for x in NestedDictValues(data[args.rcp])]
 start_times            = max(start_times)
