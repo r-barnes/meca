@@ -230,7 +230,7 @@ def PrecipitationSeasonality(models, startyear, endyear):
 #Mean Diurnal Range (Mean of monthly (max temp - min temp))
 def MeanDiurnalRange(models, startyear, endyear):
   accum                = None
-  firstmodel           = models.values().next()
+  firstmodel           = list(models.values()).next()
   start_time, end_time = firstmodel['tasmax'].yearRangeToTimeRange(startyear,endyear)
   for m in models:
     for t in range(start_time,end_time+1):
