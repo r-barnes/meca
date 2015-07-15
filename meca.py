@@ -299,7 +299,7 @@ def writeArrayToArcGrid(filename,arr,exmodel):
   arr[np.isnan(arr)] = -9999
   arr                = np.flipud(arr)
   fout               = open(filename,'wb')
-  headerstring       = 'NCOLS %d\nNROWS %d\nXLLCENTER %f\nYLLCENTER %f\nCELLSIZE %f\nNODATA_value %f\n' % (arr.shape[1], arr.shape[0], exmodel.lon.min(), exmodel.lat.min(), abs(exmodel.lat[1]-exmodel.lat[0]),-9999)
+  headerstring       = bytes('NCOLS %d\nNROWS %d\nXLLCENTER %f\nYLLCENTER %f\nCELLSIZE %f\nNODATA_value %f\n' % (arr.shape[1], arr.shape[0], exmodel.lon.min(), exmodel.lat.min(), abs(exmodel.lat[1]-exmodel.lat[0]),-9999), 'UTF-8')
   fout.write(headerstring)
   np.savetxt(fout,arr,'%5.2f')
 
