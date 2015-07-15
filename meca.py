@@ -13,6 +13,7 @@ import datetime               #For managing time manipulation
 import time                   #For managing time manipulation
 import fnmatch                #For filtering file names
 import argparse               #For handling command line magic
+import code
 
 #import code #For debugging with: code.interact(local=locals())
 
@@ -248,6 +249,7 @@ def MeanDiurnalRange(models, startyear, endyear):
 
 def _indAccum(models, startyear, endyear, indvar, sumvar, maxmin, mean):
   accum                = None
+  code.interact(local=locals())
   firstmodel           = list(models.values())[0]
   start_time, end_time = firstmodel[indvar].yearRangeToTimeRange(startyear,endyear)
   for m in models:
@@ -332,10 +334,11 @@ for fname in files:
     data[rcp][model] = {}
   print(rcp,model,variable)
   data[rcp][model][variable] = HDFClimateGrid(fname, variable)
+  dts_of_model               = list(data[rcp][model][variable].timesToDateTime())
+  print("\tStart: %s, End %s" % (dts_of_model[0 ].strftime("%y-%m-%d"), dts_of_model[-1].strftime("%y-%m-%d")))
   examplemodel               = data[rcp][model][variable]
 
 varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
-varstocalculate = [MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
 #varstocalculate = [AnnualMeanTemperature]
 for v in varstocalculate:
   print("Running %s..." % (v.__name__))
