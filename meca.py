@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #from scipy.io import netcdf  #For NetCDF file reading
 import h5py                  #For HDF5 file reading
