@@ -354,9 +354,8 @@ for fname in files:
 varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
 #varstocalculate = [AnnualMeanTemperature]
 
-models_to_be_processed = NestedDictValues(data[args.rcp])
-start_times            = [x.startTime() for x in models_to_be_processed]
-end_times              = [x.endTime()   for x in models_to_be_processed]
+start_times            = [x.startTime() for x in NestedDictValues(data[args.rcp])]
+end_times              = [x.endTime()   for x in NestedDictValues(data[args.rcp])]
 start_times            = max(start_times)
 end_times              = min(end_times)
 
