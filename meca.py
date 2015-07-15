@@ -316,7 +316,7 @@ parser.add_argument('output_prefix', type=str, nargs=1, help='Prefix to output f
 args = parser.parse_args()
 
 files = []
-for root, dirnames, filenames in os.walk(args.basedir):
+for root, dirnames, filenames in os.walk(args.basedir[0]):
   for filename in fnmatch.filter(filenames, 'BCSD*.nc'):
     files.append(os.path.join(root, filename))
 
