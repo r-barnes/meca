@@ -61,7 +61,7 @@ class ClimateGrid():
     return map(lambda x: self.start_time+datetime.timedelta(days=x),self.time)
 
   def startTime(self):
-    return self.start_time+datetime.timedelta(days=x),self.time[0])
+    return self.start_time+datetime.timedelta(days=self.time[0])
 
   def endTime(self):
     return self.start_time+datetime.timedelta(days=self.time[-1])
