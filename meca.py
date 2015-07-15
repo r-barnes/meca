@@ -248,7 +248,7 @@ def MeanDiurnalRange(models, startyear, endyear):
 
 def _indAccum(models, startyear, endyear, indvar, sumvar, maxmin, mean):
   accum                = None
-  firstmodel           = models.itervalues().next()
+  firstmodel           = list(models.values())[0]
   start_time, end_time = firstmodel[indvar].yearRangeToTimeRange(startyear,endyear)
   for m in models:
     sys.stderr.write('.')
