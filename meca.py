@@ -13,7 +13,6 @@ import datetime               #For managing time manipulation
 import time                   #For managing time manipulation
 import fnmatch                #For filtering file names
 import argparse               #For handling command line magic
-import code
 
 #import code #For debugging with: code.interact(local=locals())
 
@@ -113,20 +112,34 @@ class ClimateGrid():
     min_grid          = np.nanmin(tgrid, axis=0)
     return min_grid
 
+  #Loop through all sets of "three adjacent months" in a year, including the
+  #final Dec, Jan, and Feb where Jan and Feb are in the new year. For each grid
+  #cell find the set of three that maximizes or minimizes its value and return
+  #the starting index in time of when that occurs.
   def _indexOf3(self, startyear, func):
     start_time = self.yearMonthToTime(startyear,1)
-    best       = start_time*np.ones(shape=self.data.shape[1:3]) #Index of best place to start
+    #Specify that the original starting time is hte best place to start for each
+    #spatial location. Pulling shape[1:3] gets the spatial dimensions of the
+    #data set.
+    best       = start_time*np.ones(shape=self.data.shape[1:3])
     previous   = None #Previous grouping
-    for t in range(start_time,start_time+12+1): #To make range inclusive
-      current               = np.sum(self.data[start_time:start_time+3],axis=0)
-      current[current>1e15] = np.nan
+    for t in range(start_time,start_time+12):
+      current               = np.sum(self.data[t:t+3],axis=0)
+      current[current>1e10] = np.nan
       if previous is None:
         previous = current
       else:
+        #The following line will return an array of the same shape as the
+        #spatial dimensions of the data with values {True,False}. The best
+        #starting times for the true values will then be set to the current
+        #time. Since somvalues can be NaN, this may raise an "invalid value"
+        #warning. That's okay: we'll deal with NaN later.
         better       = func(current,previous)
-        best[better] = start_time
-    return start_time
+        best[better] = t
+    best = best.astype(int)
+    return best
 
+  #Find the minimum values
   def indexMinOf3(self, startyear):
     return self._indexOf3(startyear, lambda current,previous: current<previous)
 
@@ -261,19 +274,33 @@ def MeanDiurnalRange(models, startyear, endyear):
   accum /= len(models)*(start_time-end_time+1)
   return accum
 
+#Summation of data across the something-est quarter of the year. For instance,
+#one of the outputs is the Mean Temperature of the Wettest Quarter. indvar, in
+#this case, is "pr" whereas sumvar is 'tas'.
 def _indAccum(models, startyear, endyear, indvar, sumvar, maxmin, mean):
   accum                = None
-  code.interact(local=locals())
   firstmodel           = list(models.values())[0]
   start_time, end_time = firstmodel[indvar].yearRangeToTimeRange(startyear,endyear)
   for m in models:
     sys.stderr.write('.')
+
+    #We can't do fancy indexing on HDF data, so we need to pull the whole file in
+    model_as_np = np.array(models[m][sumvar].data)
+
+    #Average across, say, 30-year time period
     for t in range(start_time,end_time+1,12):
       if maxmin=='max':
         ind = models[m][indvar].indexMaxOf3(startyear)
       elif maxmin=='min':
         ind = models[m][indvar].indexMinOf3(startyear)
-      val = np.sum(models[m][sumvar].data[ind:ind+3],axis=0)
+      #Ind is now a 2D array with the same shape as the spatial elements of the
+      #data indicated by models[m][indvar]. We cannot access the correct values
+      #from this array by itself: we need to create indices for the spatial
+      #elements as well.
+      mshape        = models[m][indvar].data.shape
+      k,j           = np.meshgrid(np.arange(mshape[2]), np.arange(mshape[1]))
+      val           = model_as_np[ind,j,k]+model_as_np[ind+1,j,k]+model_as_np[ind+2,j,k]
+      val[val>1e10] = np.nan
       if mean:
         val/=3
       if accum is None:
@@ -281,7 +308,7 @@ def _indAccum(models, startyear, endyear, indvar, sumvar, maxmin, mean):
       else:
         accum += val
   sys.stderr.write("\n")
-  return accum
+  return accum/(endyear-startyear+1)
 
 def MeanTempWettest(models, startyear, endyear):
   return _indAccum(models,startyear,endyear,'pr','tas','max',mean=True)/len(models)
@@ -352,14 +379,14 @@ for fname in files:
   examplemodel               = data[rcp][model][variable]
 
 varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
-#varstocalculate = [AnnualMeanTemperature]
+#varstocalculate = [MeanTempWettest]
 
 start_times            = [x.startTime() for x in NestedDictValues(data[args.rcp])]
 end_times              = [x.endTime()   for x in NestedDictValues(data[args.rcp])]
 start_times            = max(start_times)
 end_times              = min(end_times)
 
-print("Most narrow time window for data is %s to %s" % (start_times.strftime("%Y-%m-%d"), end_times.strftime("%Y-%m-%d")))
+print("Most narrow time window for data is %s to %s. Your slice should fall within this range." % (start_times.strftime("%Y-%m-%d"), end_times.strftime("%Y-%m-%d")))
 
 for v in varstocalculate:
   print("Running %s..." % (v.__name__))
