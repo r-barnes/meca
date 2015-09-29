@@ -253,6 +253,8 @@ def Minpr(models, startyear, endyear):
 def PrecipitationSeasonality(models, startyear, endyear):
   return ModelAccum(models,lambda x: x['pr'].stdVals(startyear,endyear)) /len(models)
 
+def AnnualPrecip(models, startyear, endyear):
+  return ModelAccum(models,lambda x: x['pr'].meanVals(startyear,endyear)) /len(models)
 
 
 #Mean Diurnal Range (Mean of monthly (max temp - min temp))
@@ -321,9 +323,6 @@ def MeanTempWarmest(models, startyear, endyear):
 
 def MeanTempCoolest(models, startyear, endyear):
   return _indAccum(models,startyear,endyear,'tas','tas','min',mean=True)/len(models)
-
-def AnnualPrecip(models, startyear, endyear):
-  return ModelAccum(models,lambda x: x['pr'].meanVals(startyear,endyear))
 
 def prWesttest(models, startyear, endyear):
   return _indAccum(models,startyear,endyear,'pr','pr','max',mean=False)/len(models)
