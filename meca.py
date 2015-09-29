@@ -373,7 +373,11 @@ for fname in files:
     data[rcp] = {}
   if not model in data[rcp]:
     data[rcp][model] = {}
-  data[rcp][model][variable] = HDFClimateGrid(fname, variable)
+  try:    
+    data[rcp][model][variable] = HDFClimateGrid(fname, variable)
+  except:
+    print("Unable to open file '{0:}'".format(fname))
+    continue
   dts_of_model               = list(data[rcp][model][variable].timesToDateTime())
   print("%10s %15s %10s %10s %10s" % (rcp,model,variable,dts_of_model[0 ].strftime("%Y-%m-%d"), dts_of_model[-1].strftime("%Y-%m-%d")))
   examplemodel               = data[rcp][model][variable]
