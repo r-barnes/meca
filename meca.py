@@ -336,6 +336,12 @@ def prWarmest(models, startyear, endyear):
 def prCoolest(models, startyear, endyear):
   return _indAccum(models,startyear,endyear,'tas','pr','min',mean=False)/len(models)
 
+def TemperatureRange(models, startyear, endyear):
+  return MaxTemp(models,startyear,endyear)-MinTemp(models,startyear,endyear)
+
+def Isothermality(models, startyear, endyear):
+  return MeanDiurnalRange(models,startyear,endyear)/TemperatureRange(models,startyear,endyear)
+
 def writeArrayToArcGrid(filename,arr,exmodel):
   arr                = np.copy(arr)
   arr[np.isnan(arr)] = -9999
@@ -381,7 +387,7 @@ for fname in files:
   print("%10s %15s %10s %10s %10s" % (rcp,model,variable,dts_of_model[0 ].strftime("%Y-%m-%d"), dts_of_model[-1].strftime("%Y-%m-%d")))
   examplemodel               = data[rcp][model][variable]
 
-varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest]
+varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest,TemperatureRange]
 #varstocalculate = [MeanTempWettest]
 
 start_times            = [x.startTime() for x in NestedDictValues(data[args.rcp])]
