@@ -363,6 +363,11 @@ parser.add_argument('endyear',       type=int, help='End year of averaging inter
 parser.add_argument('output_prefix', type=str, help='Prefix to output files')
 args = parser.parse_args()
 
+try:
+  os.makedirs(os.path.dirname(args.output_prefix))
+except FileExistsError:
+  pass
+
 files = []
 for root, dirnames, filenames in os.walk(args.basedir):
   for filename in fnmatch.filter(filenames, 'BCSD*.nc'):
