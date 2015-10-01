@@ -88,6 +88,21 @@ class ClimateGrid():
     days      = (this_time-self.start_time).days
     return binaryfind(self.time, days)
 
+  def AverageThanExtreme(self, startyear, endyear, extreme_func):
+    """Averages each month across all years. So, [Jan2014,Jan2015,Jan2016,...]
+     becomes [JanAverage]. The maximum of [JanAverage,FebAverage,MarAverage,...]
+     is then chosen. extreme_func should be np.fmax or np.fmin."""
+
+    extreme_vals = None
+    for month in range(0,12):
+      this_extreme = self.meanVals(startyear, endyear, [month])
+      if not extreme_vals:
+        extreme_vals = this_extreme
+      else:
+        extreme_vals = extreme_func(extreme_vals, this_extreme)
+    return extreme_vals
+
+
   def maxVals(self, startyear, endyear, months=None):
     if months:
       times = self.yearMonthsToTimes(startyear, endyear, months)
@@ -238,10 +253,16 @@ def TemperatureSeasonality(models, startyear, endyear):
   return ModelAccum(models,lambda x: x['tas'].stdVals(startyear,endyear)) /len(models)
 
 def MaxTemp(models, startyear, endyear):
-  return ModelAccum(models,lambda x: x['tasmax'].maxVals(startyear,endyear)) /len(models)
+  """Averages each month across all years. So, [Jan2014,Jan2015,Jan2016,...]
+     becomes [JanAverage]. The maximum of [JanAverage,FebAverage,MarAverage,...]
+     is then chosen. The mean of [MaxModel1,MaxModel2,...] is then taken."""
+  return ModelAccum(models,lambda x: x['tasmax'].AverageThanExtreme(startyear,endyear,np.fmax)) /len(models)
 
 def MinTemp(models, startyear, endyear):
-  return ModelAccum(models,lambda x: x['tasmin'].minVals(startyear,endyear)) /len(models)
+  """Averages each month across all years. So, [Jan2014,Jan2015,Jan2016,...]
+     becomes [JanAverage]. The minimum of [JanAverage,FebAverage,MarAverage,...]
+     is then chosen. The mean of [MinModel1,MinModel2,...] is then taken."""
+  return ModelAccum(models,lambda x: x['tasmin'].AverageThanExtreme(startyear,endyear,np.fmin)) /len(models)
 
 def Maxpr(models, startyear, endyear):
   return ModelAccum(models,lambda x: x['pr'].maxVals(startyear,endyear)) /len(models)
