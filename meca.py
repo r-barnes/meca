@@ -94,7 +94,7 @@ class ClimateGrid():
       tgrid = self.data[times]
     else:
       start,end = self.yearRangeToTimeRange(startyear,endyear)
-      tgrid     = self.data[start:end]
+      tgrid     = self.data[start:end+1]
 
     tgrid[tgrid>1e15] = np.nan
     max_grid          = np.nanmax(tgrid, axis=0)
@@ -106,7 +106,7 @@ class ClimateGrid():
       tgrid = self.data[times]
     else:
       start,end = self.yearRangeToTimeRange(startyear,endyear)
-      tgrid     = self.data[start:end]
+      tgrid     = self.data[start:end+1]
 
     tgrid[tgrid>1e15] = np.nan
     min_grid          = np.nanmin(tgrid, axis=0)
@@ -152,7 +152,7 @@ class ClimateGrid():
       tgrid = self.data[times]
     else:
       start,end = self.yearRangeToTimeRange(startyear,endyear)
-      tgrid     = self.data[start:end]
+      tgrid     = self.data[start:end+1]
 
     tgrid[tgrid>1e15] = np.nan
     avg_grid          = np.mean(tgrid, axis=0)
@@ -164,7 +164,7 @@ class ClimateGrid():
       tgrid = self.data[times]
     else:
       start,end = self.yearRangeToTimeRange(startyear,endyear)
-      tgrid     = self.data[start:end]
+      tgrid     = self.data[start:end+1]
 
     tgrid[tgrid>1e15] = np.nan
     std_grid          = np.std(tgrid, axis=0)
