@@ -233,7 +233,7 @@ class HDFClimateGrid(ClimateGrid):
 
 #Mean Temperature of Wettest Quarter
 def ModelAccum(models, func):
-  accum   = None
+  accum = None
   for m in models:
     sys.stderr.write('.')
     val = func(models[m])
