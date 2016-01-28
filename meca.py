@@ -231,51 +231,38 @@ class HDFClimateGrid(ClimateGrid):
 
 
 
-#Mean Temperature of Wettest Quarter
-def ModelAccum(models, func):
-  accum = None
-  for m in models:
-    sys.stderr.write('.')
-    val = func(models[m])
-    if accum is None:
-      accum = val
-    else:
-      accum += val
-  sys.stderr.write("\n")
-  return accum
-
 #Annual Mean Temperature
 def AnnualMeanTemperature(models, startyear, endyear):
-  return ModelAccum(models,lambda x: x['tas'].meanVals(startyear,endyear)) /len(models)
+  return sum(map(lambda m: models[m]['tas'].meanVals(startyear,endyear),models)) /len(models)
 
 #Temperature Seasonality (variation across 12 months)
 def TemperatureSeasonality(models, startyear, endyear):
-  return ModelAccum(models,lambda x: x['tas'].stdVals(startyear,endyear)) /len(models)
+  return sum(map(lambda m: models[m]['tas'].stdVals(startyear,endyear),models)) /len(models)
 
 def MaxTemp(models, startyear, endyear):
   """Averages each month across all years. So, [Jan2014,Jan2015,Jan2016,...]
      becomes [JanAverage]. The maximum of [JanAverage,FebAverage,MarAverage,...]
      is then chosen. The mean of [MaxModel1,MaxModel2,...] is then taken."""
-  return ModelAccum(models,lambda x: x['tasmax'].AverageThanExtreme(startyear,endyear,np.fmax)) /len(models)
+  return sum(map(lambda m: models[m]['tasmax'].AverageThanExtreme(startyear,endyear,np.fmax), models)) /len(models)
 
 def MinTemp(models, startyear, endyear):
   """Averages each month across all years. So, [Jan2014,Jan2015,Jan2016,...]
      becomes [JanAverage]. The minimum of [JanAverage,FebAverage,MarAverage,...]
      is then chosen. The mean of [MinModel1,MinModel2,...] is then taken."""
-  return ModelAccum(models,lambda x: x['tasmin'].AverageThanExtreme(startyear,endyear,np.fmin)) /len(models)
+  return sum(map(lambda m: models[m]['tasmin'].AverageThanExtreme(startyear,endyear,np.fmin), models)) /len(models)
 
 def Maxpr(models, startyear, endyear):
-  return ModelAccum(models,lambda x: x['pr'].maxVals(startyear,endyear)) /len(models)
+  return sum(map(lambda m: models[m]['pr'].maxVals(startyear,endyear), models)) /len(models)
 
 def Minpr(models, startyear, endyear):
-  return ModelAccum(models,lambda x: x['pr'].minVals(startyear,endyear)) /len(models)
+  return sum(map(lambda m: models[m]['pr'].minVals(startyear,endyear), models)) /len(models)
 
 #Temperature Seasonality (variation across 12 months)
 def PrecipitationSeasonality(models, startyear, endyear):
-  return ModelAccum(models,lambda x: x['pr'].stdVals(startyear,endyear)) /len(models)
+  return sum(map(lambda m: 100*models[m]['pr'].stdVals(startyear,endyear)/(1+models[m]['pr'].sumVals(startyear,endyear)), models)) /len(models)
 
 def AnnualPrecip(models, startyear, endyear):
-  return ModelAccum(models,lambda x: x['pr'].meanVals(startyear,endyear)) /len(models)
+  return sum(map(lambda m: models[m]['pr'].sumVals(startyear,endyear), models)) /(endyear-startyear+1) /len(models)
 
 
 #Mean Diurnal Range (Mean of monthly (max temp - min temp))
