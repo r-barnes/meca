@@ -142,9 +142,7 @@ class ClimateGrid():
     for t in range(start_time,start_time+12):
       current               = np.sum(self.data[t:t+3],axis=0)*self.conversion
       current[current>1e10] = np.nan
-      if previous is None:
-        previous = current
-      else:
+      if previous is not None:
         #The following line will return an array of the same shape as the
         #spatial dimensions of the data with values {True,False}. The best
         #starting times for the true values will then be set to the current
@@ -152,6 +150,7 @@ class ClimateGrid():
         #warning. That's okay: we'll deal with NaN later.
         better       = func(current,previous)
         best[better] = t
+      previous     = current
     best = best.astype(int)
     return best
 
