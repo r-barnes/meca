@@ -400,7 +400,7 @@ for fname in files:
   print("%10s %15s %10s %10s %10s" % (rcp,model,variable,dts_of_model[0 ].strftime("%Y-%m-%d"), dts_of_model[-1].strftime("%Y-%m-%d")))
   examplemodel               = data[rcp][model][variable]
 
-varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest,TemperatureRange]
+varstocalculate = [AnnualMeanTemperature,TemperatureSeasonality,MaxTemp,MinTemp,Maxpr,Minpr,PrecipitationSeasonality,MeanDiurnalRange,MeanTempWettest,MeanTempDriest,MeanTempWarmest,MeanTempCoolest,AnnualPrecip,prWesttest,prDriest,prWarmest,prCoolest,TemperatureRange,Isothermality]
 #varstocalculate = [MeanTempWettest]
 
 start_times            = [x.startTime() for x in NestedDictValues(data[args.rcp])]
