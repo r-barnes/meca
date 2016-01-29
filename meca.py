@@ -321,28 +321,28 @@ def _indAccum(models, startyear, endyear, indvar, sumvar, maxmin, mean):
   return accum/(endyear-startyear+1)
 
 def MeanTempWettest(models, startyear, endyear):
-  return _indAccum(models,startyear,endyear,'pr','tas','max',mean=True)/len(models)
+  return _indAccum(models,startyear,endyear,'pr','tas','max', mean=True )/len(models)
 
 def MeanTempDriest(models, startyear, endyear):
-  return _indAccum(models,startyear,endyear,'pr','tas','min',mean=True)/len(models)
+  return _indAccum(models,startyear,endyear,'pr','tas','min', mean=True )/len(models)
 
 def MeanTempWarmest(models, startyear, endyear):
-  return _indAccum(models,startyear,endyear,'tas','tas','max',mean=True)/len(models)
+  return _indAccum(models,startyear,endyear,'tas','tas','max',mean=True )/len(models)
 
 def MeanTempCoolest(models, startyear, endyear):
-  return _indAccum(models,startyear,endyear,'tas','tas','min',mean=True)/len(models)
+  return _indAccum(models,startyear,endyear,'tas','tas','min',mean=True )/len(models)
 
 def prWesttest(models, startyear, endyear):
-  return _indAccum(models,startyear,endyear,'pr','pr','max',mean=False)/len(models)
+  return _indAccum(models,startyear,endyear,'pr','pr','max',  mean=False)/len(models)
 
 def prDriest(models, startyear, endyear):
-  return _indAccum(models,startyear,endyear,'pr','pr','min',mean=False)/len(models)
+  return _indAccum(models,startyear,endyear,'pr','pr','min',  mean=False)/len(models)
 
 def prWarmest(models, startyear, endyear):
-  return _indAccum(models,startyear,endyear,'tas','pr','max',mean=False)/len(models)
+  return _indAccum(models,startyear,endyear,'tas','pr','max', mean=False)/len(models)
 
 def prCoolest(models, startyear, endyear):
-  return _indAccum(models,startyear,endyear,'tas','pr','min',mean=False)/len(models)
+  return _indAccum(models,startyear,endyear,'tas','pr','min', mean=False)/len(models)
 
 def TemperatureRange(models, startyear, endyear):
   return MaxTemp(models,startyear,endyear)-MinTemp(models,startyear,endyear)
