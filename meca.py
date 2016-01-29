@@ -162,6 +162,18 @@ class ClimateGrid():
   def indexMaxOf3(self, startyear):
     return self._indexOf3(startyear, lambda current,previous: current>previous)
 
+  def sumVals(self, startyear, endyear, months=None):
+    if months:
+      times = self.yearMonthsToTimes(startyear, endyear, months)
+      tgrid = self.data[times]
+    else:
+      start,end = self.yearRangeToTimeRange(startyear,endyear)
+      tgrid     = self.data[start:end+1]
+
+    tgrid[tgrid>1e15] = np.nan
+    sum_grid          = np.sum(tgrid, axis=0)*self.conversion
+    return sum_grid
+
   def meanVals(self, startyear, endyear, months=None):
     if months:
       times = self.yearMonthsToTimes(startyear, endyear, months)
