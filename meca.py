@@ -259,7 +259,7 @@ def Minpr(models, startyear, endyear):
 
 #Temperature Seasonality (variation across 12 months)
 def PrecipitationSeasonality(models, startyear, endyear):
-  return sum(map(lambda m: 100*models[m]['pr'].stdVals(startyear,endyear)/(1+models[m]['pr'].sumVals(startyear,endyear)), models)) /len(models)
+  return sum(map(lambda m: 100*models[m]['pr'].stdVals(startyear,endyear)/(1+models[m]['pr'].sumVals(startyear,endyear)/(endyear-startyear+1)/12), models)) /len(models)
 
 def AnnualPrecip(models, startyear, endyear):
   return sum(map(lambda m: models[m]['pr'].sumVals(startyear,endyear), models)) /(endyear-startyear+1) /len(models)
