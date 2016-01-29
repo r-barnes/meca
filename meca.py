@@ -350,7 +350,7 @@ def TemperatureRange(models, startyear, endyear):
   return MaxTemp(models,startyear,endyear)-MinTemp(models,startyear,endyear)
 
 def Isothermality(models, startyear, endyear):
-  return MeanDiurnalRange(models,startyear,endyear)/TemperatureRange(models,startyear,endyear)
+  return MeanDiurnalRange(models,startyear,endyear)/TemperatureRange(models,startyear,endyear)*100
 
 def writeArrayToArcGrid(filename,arr,exmodel):
   arr                = np.copy(arr)
