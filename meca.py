@@ -148,14 +148,14 @@ class ClimateGrid():
         #The following line will return an array of the same shape as the
         #spatial dimensions of the data with values {True,False}. The best
         #starting times for the true values will then be set to the current
-        #time. Since somvalues can be NaN, this may raise an "invalid value"
+        #time. Since some values can be NaN, this may raise an "invalid value"
         #warning. That's okay: we'll deal with NaN later.
         better       = func(current,previous)
         best[better] = t
     best = best.astype(int)
     return best
 
-  #Find the minimum values
+  #Find the month which begins a triplet of minimum values
   def indexMinOf3(self, startyear):
     return self._indexOf3(startyear, lambda current,previous: current<previous)
 
@@ -300,8 +300,8 @@ def _indAccum(models, startyear, endyear, indvar, sumvar, maxmin, mean):
     model_as_np = np.array(models[m][sumvar].data)*models[m][sumvar].conversion
 
     #Average across, say, 30-year time period
-    for t in range(start_time,end_time+1,12):
-      if maxmin=='max':
+    for t in range(start_time,end_time+1,12): #Walk forward one year at a time
+      if maxmin=='max': #Find starting month of something-est quarter of the year
         ind = models[m][indvar].indexMaxOf3(startyear)
       elif maxmin=='min':
         ind = models[m][indvar].indexMinOf3(startyear)
