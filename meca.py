@@ -97,7 +97,7 @@ class ClimateGrid():
     extreme_vals = None
     for month in range(0,12):
       this_extreme = self.meanVals(startyear, endyear, [month])
-      if not extreme_vals:
+      if extreme_vals==None:
         extreme_vals = this_extreme
       else:
         extreme_vals = extreme_func(extreme_vals, this_extreme)
