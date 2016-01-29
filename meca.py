@@ -283,7 +283,7 @@ def MeanDiurnalRange(models, startyear, endyear):
         accum = val
       else:
         accum += val
-  accum /= len(models)*(start_time-end_time+1)
+  accum /= len(models)*(end_time-start_time+1)
   return accum
 
 #Summation of data across the something-est quarter of the year. For instance,
