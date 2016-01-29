@@ -43,6 +43,7 @@ def binaryfind(arr, val):
 class ClimateGrid():
   def __init__(self):
     self.start_time = datetime.datetime(year=1950, month=1, day=1, hour=0, minute=0, second=0)
+    self.conversion = 1
 
   def getGridByTime(self, year, month):
     time = self.yearMonthToTime(year, month)
@@ -112,7 +113,7 @@ class ClimateGrid():
       tgrid     = self.data[start:end+1]
 
     tgrid[tgrid>1e15] = np.nan
-    max_grid          = np.nanmax(tgrid, axis=0)
+    max_grid          = np.nanmax(tgrid, axis=0)*self.conversion
     return max_grid
 
   def minVals(self, startyear, endyear, months=None):
@@ -124,7 +125,7 @@ class ClimateGrid():
       tgrid     = self.data[start:end+1]
 
     tgrid[tgrid>1e15] = np.nan
-    min_grid          = np.nanmin(tgrid, axis=0)
+    min_grid          = np.nanmin(tgrid, axis=0)*self.conversion
     return min_grid
 
   #Loop through all sets of "three adjacent months" in a year, including the
@@ -139,7 +140,7 @@ class ClimateGrid():
     best       = start_time*np.ones(shape=self.data.shape[1:3])
     previous   = None #Previous grouping
     for t in range(start_time,start_time+12):
-      current               = np.sum(self.data[t:t+3],axis=0)
+      current               = np.sum(self.data[t:t+3],axis=0)*self.conversion
       current[current>1e10] = np.nan
       if previous is None:
         previous = current
@@ -170,7 +171,7 @@ class ClimateGrid():
       tgrid     = self.data[start:end+1]
 
     tgrid[tgrid>1e15] = np.nan
-    avg_grid          = np.mean(tgrid, axis=0)
+    avg_grid          = np.mean(tgrid, axis=0)*self.conversion
     return avg_grid
 
   def stdVals(self, startyear, endyear, months=None):
@@ -182,13 +183,13 @@ class ClimateGrid():
       tgrid     = self.data[start:end+1]
 
     tgrid[tgrid>1e15] = np.nan
-    std_grid          = np.std(tgrid, axis=0)
+    std_grid          = np.std(tgrid, axis=0)*abs(self.conversion)
     return std_grid
 
   def timeSeries(self, lat, lon):
     y = binaryfind(self.lat[:],float(lat))
     x = binaryfind(self.lon[:],float(lon))
-    return self.data[:,y,x]
+    return self.data[:,y,x]*self.converison
 
 
 class NetCDFClimateGrid(ClimateGrid):
@@ -213,13 +214,14 @@ class NetCDFClimateGrid(ClimateGrid):
     return self.fin.variables[var].dimensions
 
 class HDFClimateGrid(ClimateGrid):
-  def __init__(self, filename, varname):
+  def __init__(self, filename, varname, conversion=1):
     ClimateGrid.__init__(self)
-    self.fin  = h5py.File(filename,'r')
-    self.data = self.fin[varname]
-    self.lat  = self.fin['latitude'][:]
-    self.lon  = -(360-self.fin['longitude'][:]) #Convert from degrees East [0, 360)
-    self.time = self.fin['time'][:]
+    self.fin        = h5py.File(filename,'r')
+    self.data       = self.fin[varname]
+    self.lat        = self.fin['latitude'][:]
+    self.lon        = -(360-self.fin['longitude'][:]) #Convert from degrees East [0, 360)
+    self.time       = self.fin['time'][:]
+    self.conversion = conversion
 
   def varNames(self):
     return self.fin.keys()
@@ -272,11 +274,11 @@ def MeanDiurnalRange(models, startyear, endyear):
   start_time, end_time = firstmodel['tasmax'].yearRangeToTimeRange(startyear,endyear)
   for m in models:
     for t in range(start_time,end_time+1):
-      maxdat               = models[m]['tasmax'].data[t]
-      mindat               = models[m]['tasmin'].data[t]
-      maxdat[maxdat>1e15]  = np.nan
+      maxdat              = models[m]['tasmax'].data[t] * models[m]['tasmax'].conversion
+      mindat              = models[m]['tasmin'].data[t] * models[m]['tasmin'].conversion
+      maxdat[maxdat>1e15] = np.nan
       mindat[mindat>1e15] = np.nan
-      val                  = maxdat-mindat
+      val                 = maxdat-mindat
       if accum is None:
         accum = val
       else:
@@ -295,7 +297,7 @@ def _indAccum(models, startyear, endyear, indvar, sumvar, maxmin, mean):
     sys.stderr.write('.')
 
     #We can't do fancy indexing on HDF data, so we need to pull the whole file in
-    model_as_np = np.array(models[m][sumvar].data)
+    model_as_np = np.array(models[m][sumvar].data)*models[m][sumvar].conversion
 
     #Average across, say, 30-year time period
     for t in range(start_time,end_time+1,12):
@@ -393,6 +395,8 @@ for fname in files:
     data[rcp][model] = {}
   try:    
     data[rcp][model][variable] = HDFClimateGrid(fname, variable)
+    if variable=='pr':
+      data[rcp][model][variable].conversion = 30
   except:
     print("Unable to open file '{0:}'".format(fname))
     continue
