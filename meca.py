@@ -133,7 +133,7 @@ class ClimateGrid():
   #the starting index in time of when that occurs.
   def _indexOf3(self, startyear, func):
     start_time = self.yearMonthToTime(startyear,1)
-    #Specify that the original starting time is hte best place to start for each
+    #Specify that the original starting time is the best place to start for each
     #spatial location. Pulling shape[1:3] gets the spatial dimensions of the
     #data set.
     best       = start_time*np.ones(shape=self.data.shape[1:3])
